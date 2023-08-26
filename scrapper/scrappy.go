@@ -32,7 +32,7 @@ func Scrapper(pathURL string) ([]byte, error) {
 		fmt.Printf("\nMaking request to URL: %v\n", r.URL)
 	})
 
-	//Quotes scrap logic.
+	//Implements Quotes scrap logic.
 	c.OnHTML(".quote", func(e *colly.HTMLElement) {
 		text := e.ChildText(".text")
 		author := e.ChildText(".author")
@@ -44,7 +44,7 @@ func Scrapper(pathURL string) ([]byte, error) {
 		})
 		allquotes = append(allquotes, quote{Text: text, Author: author, Tags: atags})
 	})
-
+	//Implements Author Details Scrap Logic.
 	c.OnScraped(func(r *colly.Response) {
 		out, _ := json.Marshal(allquotes)
 		fmt.Println(string(out))
