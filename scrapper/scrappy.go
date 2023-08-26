@@ -19,19 +19,20 @@ type tags struct {
 
 type quotes []quote
 
-func Scrapper() ([]byte, error) {
+func Scrapper(pathURL string) ([]byte, error) {
 	var allquotes quotes
 
 	c := colly.NewCollector(
 		colly.AllowedDomains("quotes.toscrape.com"),
 	)
 	c.OnError(func(r *colly.Response, err error) {
-		log.Printf("Something went wrong: %v error Occured", err)
+		log.Printf("\nSomething went wrong: %v error Occured\n", err)
 	})
 	c.OnRequest(func(r *colly.Request) {
-		fmt.Printf("Making request to URL: %v", r.URL)
+		fmt.Printf("\nMaking request to URL: %v\n", r.URL)
 	})
 
+	//Quotes scrap logic.
 	c.OnHTML(".quote", func(e *colly.HTMLElement) {
 		text := e.ChildText(".text")
 		author := e.ChildText(".author")
@@ -43,15 +44,16 @@ func Scrapper() ([]byte, error) {
 		})
 		allquotes = append(allquotes, quote{Text: text, Author: author, Tags: atags})
 	})
+
 	c.OnScraped(func(r *colly.Response) {
 		out, _ := json.Marshal(allquotes)
 		fmt.Println(string(out))
 	})
 	c.OnResponse(func(r *colly.Response) {
-		fmt.Printf("Successfully Visited: %v Status code: %v", r.Request.URL, r.StatusCode)
+		fmt.Printf("\nSuccessfully Visited: %v Status code: %v\n", r.Request.URL, r.StatusCode)
 	})
 
-	c.Visit("https://quotes.toscrape.com/")
-	
+	c.Visit("https://quotes.toscrape.com" + pathURL)
+
 	return json.Marshal(allquotes)
 }
