@@ -1,2 +1,2 @@
 # quotesScRp
-A CLI webscrapper written in go.
+A Command Line Interfaced Quotes webscrapper written in go.
