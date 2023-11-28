@@ -108,8 +108,8 @@ func ScrapAuthorDet(authorName string) ([]byte, error) {
 
 }
 
-func ScrapQuotePage(page int) []byte {
-	pathURL := fmt.Sprintf("page/%d", page)
+func ScrapQuotePage(page string) []byte {
+	pathURL := fmt.Sprintf("page/%s", page)
 	payload, _ := scrapQuote(pathURL)
 	return payload
 }

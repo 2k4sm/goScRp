@@ -20,28 +20,40 @@ func main() {
 		randomQuote()
 	}
 
-	if (len(params)%2 != 0 || len(params) > 4){
+	if len(params)%2 != 0 || len(params) > 4 {
 		fmt.Println(errstr)
 	}
 
-	
+	var tag string = ""
+	var page string = ""
+	var authname string = ""
+	for i, j := range params {
+		if j == "-t" {
+			tag = params[i+1]
 
-	// var tag string = ""
-	// var page string = ""
-	// var authname string = ""
-	// for i, j := range params {
-	// 	if j == "-t" {
-	// 		tag = params[i+1]
+		}
+		if j == "-p" {
+			page = params[i+1]
+		}
 
-	// 	}
-	// 	if j == "-p" {
-	// 		page = params[i+1]
-	// 	}
+		if j == "-a" {
+			authname = params[i+1]
+		}
+	}
 
-	// 	if j == "-a" {
-	// 		authname = params[i+1]
-	// 	}
-	// }
+	if tag != "" && page != "" {
+		tagpageQuote(tag, page)
+	}
+	if tag != "" {
+		tagQuote(tag)
+	}
+
+	if page != "" {
+		pageQuote(page)
+	}
+	if authname != "" {
+		authPrint(authname)
+	}
 
 }
 
@@ -64,4 +76,10 @@ func tagQuote(tag string) {
 
 func pageQuote(page string) {
 	fmt.Printf("Generating quote based on page %s...", page)
+	fmt.Println(scrapper.ScrapQuotePage(page))
+}
+
+func authPrint(authname string) {
+	fmt.Printf("Generating Author details based on authorname %s....", authname)
+	fmt.Println(scrapper.ScrapAuthorDet(authname))
 }
