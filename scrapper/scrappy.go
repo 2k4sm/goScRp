@@ -53,11 +53,11 @@ func scrapQuote(pathURL string) ([]byte, error) {
 		allquotes = append(allquotes, quote{Text: text, Author: author, Tags: atags})
 	})
 
-	c.OnScraped(func(r *colly.Response) {
-		out, _ := json.Marshal(allquotes)
-		fmt.Println(string(out))
+	// c.OnScraped(func(r *colly.Response) {
+	// 	out, _ := json.Marshal(allquotes)
+	// 	fmt.Println(string(out))
 
-	})
+	// })
 	c.OnResponse(func(r *colly.Response) {
 		fmt.Printf("\nSuccessfully Visited: %v Status code: %v\n", r.Request.URL, r.StatusCode)
 	})
@@ -93,10 +93,10 @@ func ScrapAuthorDet(authorName string) ([]byte, error) {
 
 	})
 
-	c.OnScraped(func(r *colly.Response) {
-		out, _ := json.Marshal(detAuthor)
-		fmt.Println(string(out))
-	})
+	// c.OnScraped(func(r *colly.Response) {
+	// 	out, _ := json.Marshal(detAuthor)
+	// 	fmt.Println(string(out))
+	// })
 
 	c.OnResponse(func(r *colly.Response) {
 		fmt.Printf("\nSuccessfully Visited: %v Status code: %v\n", r.Request.URL, r.StatusCode)
@@ -108,12 +108,21 @@ func ScrapAuthorDet(authorName string) ([]byte, error) {
 
 }
 
-func ScrapQuotePage(page int) {
+func ScrapQuotePage(page int) []byte {
 	pathURL := fmt.Sprintf("page/%d", page)
-	scrapQuote(pathURL)
+	payload, _ := scrapQuote(pathURL)
+	return payload
 }
 
-func ScrapQuoteTag(tag string) {
+func ScrapQuoteTag(tag string) []byte {
 	pathURL := fmt.Sprintf("tag/%s", tag)
-	scrapQuote(pathURL)
+	payload, _ := scrapQuote(pathURL)
+	return payload
+}
+
+func ScrapRandomQuote() []byte {
+	pathURL := "random"
+	payload, _ := scrapQuote(pathURL)
+
+	return payload
 }
