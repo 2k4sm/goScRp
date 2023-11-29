@@ -1,7 +1,6 @@
 package scrapper
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 
@@ -9,25 +8,25 @@ import (
 )
 
 type quote struct {
-	Text   string `json:"text"`
-	Author string `json:"author"`
-	Tags   []tags `json:"tags"`
+	Text   string
+	Author string
+	Tags   []string
 }
 
 type authordet struct {
-	Author      string `json:"author"`
-	DOB         string `json:"dob"`
-	Location    string `json:"location"`
-	Description string `json:"description"`
+	Author      string
+	DOB         string
+	Location    string
+	Description string
 }
 
-type tags struct {
-	Tag string `json:"tag"`
-}
+// type tags struct {
+// 	Tag string
+// }
 
 type quotes []quote
 
-func scrapQuote(pathURL string) ([]byte, error) {
+func scrapQuote(pathURL string) quotes {
 	var allquotes quotes
 
 	c := colly.NewCollector(
@@ -44,30 +43,25 @@ func scrapQuote(pathURL string) ([]byte, error) {
 	c.OnHTML(".quote", func(e *colly.HTMLElement) {
 		text := e.ChildText(".text")
 		author := e.ChildText(".author")
-		var atags []tags
+		var atags []string
 		e.ForEach(".tag", func(i int, h *colly.HTMLElement) {
 			tag := h.Text
-			atags = append(atags, tags{tag})
+			atags = append(atags, tag)
 
 		})
 		allquotes = append(allquotes, quote{Text: text, Author: author, Tags: atags})
 	})
 
-	// c.OnScraped(func(r *colly.Response) {
-	// 	out, _ := json.Marshal(allquotes)
-	// 	fmt.Println(string(out))
-
-	// })
 	c.OnResponse(func(r *colly.Response) {
 		fmt.Printf("\nSuccessfully Visited: %v Status code: %v\n", r.Request.URL, r.StatusCode)
 	})
 
 	c.Visit("https://quotes.toscrape.com/" + pathURL)
 
-	return json.Marshal(allquotes)
+	return allquotes
 }
 
-func ScrapAuthorDet(authorName string) ([]byte, error) {
+func ScrapAuthorDet(authorName string) authordet {
 	var detAuthor authordet
 
 	c := colly.NewCollector(
@@ -93,36 +87,31 @@ func ScrapAuthorDet(authorName string) ([]byte, error) {
 
 	})
 
-	// c.OnScraped(func(r *colly.Response) {
-	// 	out, _ := json.Marshal(detAuthor)
-	// 	fmt.Println(string(out))
-	// })
-
 	c.OnResponse(func(r *colly.Response) {
 		fmt.Printf("\nSuccessfully Visited: %v Status code: %v\n", r.Request.URL, r.StatusCode)
 	})
 
 	c.Visit("https://quotes.toscrape.com/author/" + authorName)
 
-	return json.Marshal(detAuthor)
+	return detAuthor
 
 }
 
-func ScrapQuotePage(page string) []byte {
+func ScrapQuotePage(page string) quotes {
 	pathURL := fmt.Sprintf("page/%s", page)
-	payload, _ := scrapQuote(pathURL)
+	payload := scrapQuote(pathURL)
 	return payload
 }
 
-func ScrapQuoteTag(tag string) []byte {
+func ScrapQuoteTag(tag string) quotes {
 	pathURL := fmt.Sprintf("tag/%s", tag)
-	payload, _ := scrapQuote(pathURL)
+	payload := scrapQuote(pathURL)
 	return payload
 }
 
-func ScrapRandomQuote() []byte {
+func ScrapRandomQuote() quotes {
 	pathURL := "random"
-	payload, _ := scrapQuote(pathURL)
+	payload := scrapQuote(pathURL)
 
 	return payload
 }
