@@ -15,13 +15,23 @@ func main() {
 
 	params := os.Args[1:]
 	// error strings...
-	errstr := "quotesScRp Unknown Command:\nUsage:\n\t-t <tagname> Generates quotes using tag \n\t-p <pagenumber> generates quotes from the specified page \n\t-a <authorname> Prints author Information\n\t_blank Generate a random quote."
+
+	errstr := "quotesScRp Unknown Command:\nSee 'quotesScRp help'"
+
 	if len(params) < 1 {
 		randomQuote()
+		os.Exit(0)
+	}
+
+	if params[0] == "help" {
+		helpstr := "quotesScRp is a TUI Program that scrapes quotes from https://quotes.toscrape.com \n\nUsage:\n\t-t <tagname> Generates quotes using tag \n\t-p <pagenumber> generates quotes from the specified page \n\t-a <authorname> Prints author Information\n\t_blank Generate a random quote."
+		fmt.Println(helpstr)
+		os.Exit(0)
 	}
 
 	if len(params)%2 != 0 || len(params) > 4 {
 		fmt.Println(errstr)
+		os.Exit(1)
 	}
 
 	var tag string = ""
@@ -43,6 +53,7 @@ func main() {
 
 	if tag != "" && page != "" {
 		tagpageQuote(tag, page)
+		os.Exit(0)
 	}
 	if tag != "" {
 		tagQuote(tag)
@@ -53,33 +64,65 @@ func main() {
 	}
 	if authname != "" {
 		authPrint(authname)
+		os.Exit(0)
 	}
 
 }
 
 func randomQuote() {
 	fmt.Println("Generating random quote...")
-	//format this later ...
-	fmt.Println(scrapper.ScrapRandomQuote())
+
+	Payload := scrapper.ScrapRandomQuote()
+	data := Payload[0]
+	Quote := data.Text
+	Author := data.Author
+	Tags := data.Tags
+
+	fmt.Printf(Quote+"\nQuoted By:%s\n\n", Author)
+	fmt.Println("Quotes tagged as", Tags)
 }
 
 func tagpageQuote(tag string, page string) {
 	fmt.Println("Generating quote based on tag and page...")
-	fmt.Println(scrapper.ScrapQuoteTag(tag + "/page/" + page))
+
+	Payload := scrapper.ScrapQuoteTag(tag + "/page/" + page)
+	for i, data := range Payload {
+		Quote := data.Text
+		Author := data.Author
+
+		fmt.Printf("Quote:%d\t", i+1)
+		fmt.Printf(Quote+"\nQuoted By:%s\n\n", Author)
+	}
 }
 
 func tagQuote(tag string) {
-	fmt.Printf("Generating quote based on tag %s ...", tag)
-	//format this later...
-	fmt.Println(scrapper.ScrapQuoteTag(tag))
+	Payload := scrapper.ScrapQuoteTag(tag)
+	for i, data := range Payload {
+		Quote := data.Text
+		Author := data.Author
+
+		fmt.Printf("Quote:%d ", i+1)
+		fmt.Printf(Quote+"\nQuoted By:%s\n\n", Author)
+	}
 }
 
 func pageQuote(page string) {
-	fmt.Printf("Generating quote based on page %s...", page)
-	fmt.Println(scrapper.ScrapQuotePage(page))
+	Payload := scrapper.ScrapQuotePage(page)
+	for i, data := range Payload {
+		Quote := data.Text
+		Author := data.Author
+
+		fmt.Printf("Quote:%d ", i+1)
+		fmt.Printf(Quote+"\nQuoted By:%s\n\n", Author)
+	}
 }
 
 func authPrint(authname string) {
-	fmt.Printf("Generating Author details based on authorname %s....", authname)
-	fmt.Println(scrapper.ScrapAuthorDet(authname))
+	Payload := scrapper.ScrapAuthorDet(authname)
+
+	fmt.Printf("\nAuthor Name: %s\n",Payload.Author)
+	fmt.Printf("D.O.B: %s\n", Payload.DOB)
+	fmt.Printf("P.O.B: %s\n\n", Payload.Location)
+	fmt.Printf("Description: %s\n\n", Payload.Description)
+
 }

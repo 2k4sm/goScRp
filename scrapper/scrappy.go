@@ -53,7 +53,7 @@ func scrapQuote(pathURL string) quotes {
 	})
 
 	c.OnResponse(func(r *colly.Response) {
-		fmt.Printf("\nSuccessfully Visited: %v Status code: %v\n", r.Request.URL, r.StatusCode)
+		fmt.Printf("\nSuccessfully Visited: %v Status code: %v\n\n", r.Request.URL, r.StatusCode)
 	})
 
 	c.Visit("https://quotes.toscrape.com/" + pathURL)
