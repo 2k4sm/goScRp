@@ -1,4 +1,4 @@
-# goScRp
+# quotesScRp
 A Command Line Interfaced Quotes webscrapper written in go.
 
 This uses the go-colly package to scrape quotes from [quotes.toscrape.com](https://quotes.toscrape.com/) website.
@@ -7,8 +7,8 @@ This uses the go-colly package to scrape quotes from [quotes.toscrape.com](https
 
 To Modify the code :
 ```
-git clone git@github.com:2k4sm/goScRp.git
-cd goScRp
+git clone git@github.com:2k4sm/quotesScRp.git
+cd quotesScRp
 ```
 
 ## Usage
